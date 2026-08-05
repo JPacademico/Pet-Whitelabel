@@ -81,9 +81,11 @@ export function Header() {
               {item.label}
             </NavLink>
           ))}
-          <div className="flex items-center gap-2 px-4 pt-2">
-            <InstallButton />
-            <span className="text-sm text-muted">Instalar aplicativo</span>
+          <div className="pt-2">
+            <InstallButton 
+              showLabel 
+              className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-base font-semibold text-charcoal transition-colors hover:bg-cream-deep" 
+            />
           </div>
         </nav>
       )}

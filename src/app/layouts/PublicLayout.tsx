@@ -9,7 +9,7 @@ export function PublicLayout() {
   const location = useLocation();
 
   return (
-    <div className="flex min-h-dvh flex-col bg-cream">
+    <div className="flex min-h-dvh flex-col overflow-x-hidden bg-cream">
       <Header />
       {/* Keying on pathname remounts <main> per route, which restarts the CSS enter animation.
        * `prefers-reduced-motion` neutralises it globally (see tokens.css). */}
