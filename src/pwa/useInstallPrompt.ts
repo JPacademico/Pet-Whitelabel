@@ -6,7 +6,26 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
+// Capture the event globally immediately when the script runs.
+// This prevents missing the event if it fires before React components mount.
+let globalDeferred: BeforeInstallPromptEvent | null = null;
+const listeners = new Set<(e: BeforeInstallPromptEvent | null) => void>();
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    globalDeferred = e as BeforeInstallPromptEvent;
+    listeners.forEach((listener) => listener(globalDeferred));
+  });
+
+  window.addEventListener('appinstalled', () => {
+    globalDeferred = null;
+    listeners.forEach((listener) => listener(null));
+  });
+}
+
 function isIosSafari(): boolean {
+  if (typeof window === 'undefined') return false;
   const ua = window.navigator.userAgent;
   const isIos = /iPad|iPhone|iPod/.test(ua) || (ua.includes('Macintosh') && navigator.maxTouchPoints > 1);
   const isSafari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS/.test(ua);
@@ -19,24 +38,22 @@ function isIosSafari(): boolean {
  * See IMPLEMENTATION_PLAN.md §7.2.
  */
 export function useInstallPrompt() {
-  const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
+  const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(globalDeferred);
   const [installed, setInstalled] = useState(
-    () => window.matchMedia('(display-mode: standalone)').matches,
+    () => typeof window !== 'undefined' && window.matchMedia('(display-mode: standalone)').matches
   );
 
   useEffect(() => {
-    const onPrompt = (e: Event) => {
-      e.preventDefault();
-      setDeferred(e as BeforeInstallPromptEvent);
-    };
-    const onInstalled = () => {
-      setDeferred(null);
-      setInstalled(true);
-    };
-    window.addEventListener('beforeinstallprompt', onPrompt);
+    // If the event fired before this component mounted, we already have it in state via initial value.
+    // Here we just subscribe to future updates.
+    const listener = (e: BeforeInstallPromptEvent | null) => setDeferred(e);
+    listeners.add(listener);
+    
+    const onInstalled = () => setInstalled(true);
     window.addEventListener('appinstalled', onInstalled);
+    
     return () => {
-      window.removeEventListener('beforeinstallprompt', onPrompt);
+      listeners.delete(listener);
       window.removeEventListener('appinstalled', onInstalled);
     };
   }, []);
@@ -49,7 +66,8 @@ export function useInstallPrompt() {
     await deferred.prompt();
     const { outcome } = await deferred.userChoice;
     if (outcome === 'accepted') toast.success('Pet Studio instalado! 🐾');
-    setDeferred(null);
+    globalDeferred = null;
+    listeners.forEach(l => l(null));
   }, [deferred]);
 
   return { canInstall, install, installed, isIos, hasNativePrompt: !!deferred };
