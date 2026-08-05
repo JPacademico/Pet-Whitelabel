@@ -68,10 +68,10 @@ export function ProductCard({ product }: { product: Product }) {
           href={whatsappUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 rounded-full bg-teal px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-teal-deep"
+          className="flex items-center gap-1.5 rounded-full bg-teal p-2 sm:px-3 sm:py-2 text-xs font-semibold text-white transition-colors hover:bg-teal-deep"
         >
           <MessageCircle className="size-4" aria-hidden="true" />
-          Consultar
+          <span className="hidden sm:inline">Consultar</span>
         </a>
       </div>
     </Card>

@@ -13,8 +13,7 @@ export function WhatsAppFab() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Falar no WhatsApp"
-      className="group fixed right-4 z-50 flex items-center gap-2 rounded-full bg-[#25D366] py-3 pr-3 pl-3 text-white shadow-lg transition-all duration-200 ease-out-soft hover:pr-5 focus-visible:pr-5"
-      style={{ bottom: 'calc(1rem + env(safe-area-inset-bottom))' }}
+      className="group fixed right-4 bottom-4 z-50 flex items-center gap-2 rounded-full bg-[#25D366] p-3 text-white shadow-lg transition-all duration-200 ease-out-soft hover:pr-5 focus-visible:pr-5 md:bottom-6 md:right-6"
     >
       <MessageCircle className="size-7 shrink-0" aria-hidden="true" />
       <span className="max-w-0 overflow-hidden text-sm font-semibold whitespace-nowrap opacity-0 transition-all duration-200 ease-out-soft group-hover:max-w-40 group-hover:opacity-100 group-focus-visible:max-w-40 group-focus-visible:opacity-100">

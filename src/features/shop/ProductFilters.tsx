@@ -105,6 +105,20 @@ export function ProductFilters({
         </div>
       </div>
 
+      {/* Always visible Animal Filter */}
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <span className="mr-1 text-xs font-extrabold tracking-widest text-muted uppercase">Pet</span>
+        {ANIMAL_TYPE_OPTIONS.map((opt) => (
+          <FilterChip
+            key={opt.value}
+            icon={opt.icon}
+            label={opt.label}
+            active={filters.animalType === opt.value}
+            onClick={() => setAnimalType(filters.animalType === opt.value ? undefined : opt.value)}
+          />
+        ))}
+      </div>
+
       <div className={cn("mt-4 lg:block", isOpen ? "block" : "hidden")}>
         {/* Sort for Mobile */}
         <div className="mb-4 flex flex-col gap-2 lg:hidden">
@@ -140,19 +154,6 @@ export function ProductFilters({
               label={opt.label}
               active={filters.itemType === opt.value}
               onClick={() => setItemType(filters.itemType === opt.value ? undefined : opt.value)}
-            />
-          ))}
-
-          <span className="mx-1 hidden h-6 w-px bg-cream-deep sm:block" aria-hidden="true" />
-
-          <span className="mr-1 mt-2 w-full text-xs font-extrabold tracking-widest text-muted uppercase sm:mt-0 sm:w-auto">Pet</span>
-          {ANIMAL_TYPE_OPTIONS.map((opt) => (
-            <FilterChip
-              key={opt.value}
-              icon={opt.icon}
-              label={opt.label}
-              active={filters.animalType === opt.value}
-              onClick={() => setAnimalType(filters.animalType === opt.value ? undefined : opt.value)}
             />
           ))}
 
