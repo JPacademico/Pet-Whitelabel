@@ -1,4 +1,5 @@
-import { Search, X, Bone, Cat, Dog, Sparkles, Drumstick, Droplets, Tag, PackageCheck, ArrowUpDown } from 'lucide-react';
+import { useState } from 'react';
+import { Search, X, Bone, Cat, Dog, Sparkles, Drumstick, Droplets, Tag, PackageCheck, ArrowUpDown, Filter } from 'lucide-react';
 import type { AnimalType, ItemType } from '@/domain/types';
 import { FilterChip } from '@/design-system/primitives';
 import { cn } from '@/lib/cn';
@@ -49,9 +50,11 @@ export function ProductFilters({
   setSort,
   clearAll,
 }: ProductFiltersProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <div className="rounded-3xl border-2 border-cream-deep bg-white/70 p-4 backdrop-blur sm:p-5">
-      {/* Search + sort share a row on desktop so the panel stays compact. */}
+      {/* Search is always visible */}
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
         <div className="relative flex-1">
           <Search
@@ -68,7 +71,18 @@ export function ProductFilters({
           />
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Mobile Toggle Button */}
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className="flex h-11 items-center justify-center gap-2 rounded-full border-2 border-cream-deep bg-white px-4 text-sm font-bold text-charcoal lg:hidden"
+        >
+          <Filter className="size-4" />
+          {isOpen ? 'Ocultar Filtros' : 'Mostrar Filtros'}
+        </button>
+
+        {/* Sort for Desktop */}
+        <div className="hidden items-center gap-2 lg:flex">
           <ArrowUpDown className="size-4 shrink-0 text-muted" aria-hidden="true" />
           <div className="flex flex-wrap gap-1.5">
             {SORT_OPTIONS.map((opt) => (
@@ -91,47 +105,74 @@ export function ProductFilters({
         </div>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center gap-2">
-        <span className="mr-1 text-xs font-extrabold tracking-widest text-muted uppercase">
-          Categoria
-        </span>
-        {ITEM_TYPE_OPTIONS.map((opt) => (
-          <FilterChip
-            key={opt.value}
-            icon={opt.icon}
-            label={opt.label}
-            active={filters.itemType === opt.value}
-            onClick={() => setItemType(filters.itemType === opt.value ? undefined : opt.value)}
-          />
-        ))}
+      <div className={cn("mt-4 lg:block", isOpen ? "block" : "hidden")}>
+        {/* Sort for Mobile */}
+        <div className="mb-4 flex flex-col gap-2 lg:hidden">
+          <span className="text-xs font-extrabold tracking-widest text-muted uppercase">Ordenar por</span>
+          <div className="flex flex-wrap gap-1.5">
+            {SORT_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => setSort(opt.value)}
+                aria-pressed={filters.sort === opt.value}
+                className={cn(
+                  'min-h-9 rounded-full px-3 text-xs font-bold transition-colors',
+                  filters.sort === opt.value
+                    ? 'bg-charcoal text-cream'
+                    : 'bg-cream-deep text-muted hover:text-charcoal',
+                )}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
 
-        <span className="mx-1 hidden h-6 w-px bg-cream-deep sm:block" aria-hidden="true" />
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="mr-1 text-xs font-extrabold tracking-widest text-muted uppercase">
+            Categoria
+          </span>
+          {ITEM_TYPE_OPTIONS.map((opt) => (
+            <FilterChip
+              key={opt.value}
+              icon={opt.icon}
+              label={opt.label}
+              active={filters.itemType === opt.value}
+              onClick={() => setItemType(filters.itemType === opt.value ? undefined : opt.value)}
+            />
+          ))}
 
-        <span className="mr-1 text-xs font-extrabold tracking-widest text-muted uppercase">Pet</span>
-        {ANIMAL_TYPE_OPTIONS.map((opt) => (
-          <FilterChip
-            key={opt.value}
-            icon={opt.icon}
-            label={opt.label}
-            active={filters.animalType === opt.value}
-            onClick={() => setAnimalType(filters.animalType === opt.value ? undefined : opt.value)}
-          />
-        ))}
+          <span className="mx-1 hidden h-6 w-px bg-cream-deep sm:block" aria-hidden="true" />
 
-        <span className="mx-1 hidden h-6 w-px bg-cream-deep sm:block" aria-hidden="true" />
+          <span className="mr-1 mt-2 w-full text-xs font-extrabold tracking-widest text-muted uppercase sm:mt-0 sm:w-auto">Pet</span>
+          {ANIMAL_TYPE_OPTIONS.map((opt) => (
+            <FilterChip
+              key={opt.value}
+              icon={opt.icon}
+              label={opt.label}
+              active={filters.animalType === opt.value}
+              onClick={() => setAnimalType(filters.animalType === opt.value ? undefined : opt.value)}
+            />
+          ))}
 
-        <FilterChip
-          icon={PackageCheck}
-          label="Disponíveis"
-          active={filters.onlyInStock}
-          onClick={() => setOnlyInStock(!filters.onlyInStock)}
-        />
-        <FilterChip
-          icon={Tag}
-          label="Promoções"
-          active={filters.onlyOnSale}
-          onClick={() => setOnlyOnSale(!filters.onlyOnSale)}
-        />
+          <span className="mx-1 hidden h-6 w-px bg-cream-deep sm:block" aria-hidden="true" />
+
+          <div className="mt-2 flex w-full flex-wrap gap-2 sm:mt-0 sm:w-auto">
+            <FilterChip
+              icon={PackageCheck}
+              label="Disponíveis"
+              active={filters.onlyInStock}
+              onClick={() => setOnlyInStock(!filters.onlyInStock)}
+            />
+            <FilterChip
+              icon={Tag}
+              label="Promoções"
+              active={filters.onlyOnSale}
+              onClick={() => setOnlyOnSale(!filters.onlyOnSale)}
+            />
+          </div>
+        </div>
       </div>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-cream-deep pt-3">
