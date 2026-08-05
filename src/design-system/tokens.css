@@ -1,0 +1,336 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+/*
+ * Font stacks use system fonts as a safe default (no third-party font CDN —
+ * see IMPLEMENTATION_PLAN.md §5.1 / §9.3c on avoiding third-party requests).
+ * Drop self-hosted woff2 files into src/assets/fonts and add @font-face rules
+ * here when the client supplies brand fonts (Appendix C item 5).
+ */
+@theme {
+  /* Brand — sampled from example.png */
+  --color-amber-brand: #f0b21d; /* hero, featured blocks */
+  --color-amber-soft: #f8d987; /* hovers, badge backgrounds */
+  --color-cream: #faf7f0; /* default site background */
+  --color-cream-deep: #f2ede1; /* alternating section bands */
+  --color-teal: #45c0b4; /* primary CTA */
+  --color-teal-deep: #2f9e94; /* CTA hover */
+  --color-charcoal: #2b2a28; /* text, dark sections */
+  --color-muted: #7a736b; /* secondary text */
+
+  /* Semantic (micro-interactions) */
+  --color-urgent: #e04f39; /* "Urgente" — Clinic */
+  --color-sale: #e0447c; /* "Promoção" — Shop */
+  --color-success: #3f9b6d; /* "Concluído" */
+
+  /* Typography */
+  --font-display:
+    'Baloo 2', ui-rounded, 'Segoe UI Rounded', system-ui, sans-serif;
+  --font-body: 'Nunito Sans', system-ui, -apple-system, sans-serif;
+  --font-script: 'Caveat', cursive;
+
+  /* Motion */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-page: 320ms;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-body);
+    background-color: var(--color-cream);
+    color: var(--color-charcoal);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    min-height: 100dvh;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+  }
+
+  /* iOS Safari zooms the viewport when a focused input has font-size < 16px. */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-teal-deep);
+    outline-offset: 2px;
+  }
+
+  /* Page transition. Driven by a `key`-ed remount in PublicLayout rather than an animation
+   * library — a fade+rise costs nothing in JS here, and the library equivalent was the single
+   * largest item on the critical path. See IMPLEMENTATION_PLAN.md §2.7 / §9.3a. */
+  @keyframes ds-page-enter {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 12px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  .ds-page-enter {
+    animation: ds-page-enter var(--duration-page) var(--ease-out-soft) both;
+  }
+
+  /* ---------------------------------------------------------------------------
+   * Floating pet objects (design-system/motion/FloatingObject)
+   * Animates transform/opacity only — never layout properties.
+   * ------------------------------------------------------------------------ */
+  @keyframes ds-float {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) rotate(0deg);
+    }
+    50% {
+      transform: translate3d(0, var(--float-drift, -14px), 0) rotate(var(--float-rotate, 8deg));
+    }
+  }
+
+  .ds-floater {
+    position: absolute;
+    display: block;
+    padding: 0;
+    border: 0;
+    background: none;
+    line-height: 0;
+    pointer-events: none;
+    animation-name: ds-float;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    will-change: transform;
+  }
+
+  /* The wrapper carries the idle float; the inner span carries the hover reaction, so the two
+   * transforms compose instead of fighting each other. */
+  .ds-floater__inner {
+    display: block;
+    transition:
+      transform 400ms var(--ease-out-soft),
+      filter 400ms var(--ease-out-soft);
+  }
+
+  .ds-floater__shape {
+    display: block;
+  }
+
+  .ds-floater--interactive {
+    pointer-events: auto;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .ds-floater--interactive:focus-visible {
+    outline: 3px solid var(--color-teal-deep);
+    outline-offset: 6px;
+    border-radius: 9999px;
+  }
+
+  /* --- Per-shape hover personality ---------------------------------------- */
+
+  /* Bone: wags like a tail and pops forward. */
+  @keyframes ds-bone-wag {
+    0%,
+    100% {
+      transform: rotate(-14deg) scale(1.18);
+    }
+    50% {
+      transform: rotate(14deg) scale(1.18);
+    }
+  }
+  .ds-floater--bone:is(:hover, :focus-visible) .ds-floater__inner {
+    animation: ds-bone-wag 520ms ease-in-out infinite;
+    filter: drop-shadow(0 6px 10px rgba(43, 42, 40, 0.28));
+  }
+
+  /* Yarn: the ball rolls while its winding spins — the detail that makes it read as wool. */
+  @keyframes ds-yarn-roll {
+    0% {
+      transform: translateX(0) rotate(0deg) scale(1.12);
+    }
+    50% {
+      transform: translateX(10px) rotate(180deg) scale(1.12);
+    }
+    100% {
+      transform: translateX(0) rotate(360deg) scale(1.12);
+    }
+  }
+  .ds-floater--yarn:is(:hover, :focus-visible) .ds-floater__inner {
+    animation: ds-yarn-roll 1.6s linear infinite;
+    filter: drop-shadow(0 6px 10px rgba(43, 42, 40, 0.28));
+  }
+  .ds-floater--yarn .ds-yarn-thread {
+    transition: opacity 300ms var(--ease-out-soft);
+  }
+  .ds-floater--yarn:is(:hover, :focus-visible) .ds-yarn-thread {
+    opacity: 0.55;
+  }
+
+  /* Paw: presses down like a real paw print. */
+  .ds-floater--paw:is(:hover, :focus-visible) .ds-floater__inner {
+    transform: scale(0.88) rotate(-8deg);
+  }
+
+  /* Fish: darts sideways. */
+  @keyframes ds-fish-dart {
+    0%,
+    100% {
+      transform: translateX(0) scale(1.1);
+    }
+    50% {
+      transform: translateX(12px) scale(1.1);
+    }
+  }
+  .ds-floater--fish:is(:hover, :focus-visible) .ds-floater__inner {
+    animation: ds-fish-dart 700ms ease-in-out infinite;
+  }
+
+  /* Click nudge — a springy bounce, independent of the hover animation. */
+  @keyframes ds-floater-nudge {
+    0% {
+      transform: scale(1);
+    }
+    30% {
+      transform: scale(1.45) rotate(-18deg);
+    }
+    60% {
+      transform: scale(0.9) rotate(12deg);
+    }
+    100% {
+      transform: scale(1) rotate(0deg);
+    }
+  }
+  .ds-floater--nudged .ds-floater__inner {
+    animation: ds-floater-nudge 700ms var(--ease-out-soft);
+  }
+
+  /* ---------------------------------------------------------------------------
+   * Scroll reveal (design-system/motion/Reveal)
+   * ------------------------------------------------------------------------ */
+  .ds-reveal {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0);
+    transition:
+      opacity 620ms var(--ease-out-soft),
+      transform 620ms var(--ease-out-soft);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  .ds-reveal[data-visible='true'] {
+    opacity: 1;
+    transform: none;
+  }
+  .ds-reveal--left {
+    transform: translate3d(-32px, 0, 0);
+  }
+  .ds-reveal--right {
+    transform: translate3d(32px, 0, 0);
+  }
+  .ds-reveal--zoom {
+    transform: scale(0.92);
+  }
+
+  /* ---------------------------------------------------------------------------
+   * Marquee strip
+   * ------------------------------------------------------------------------ */
+  @keyframes ds-marquee {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+  .ds-marquee__track {
+    display: flex;
+    width: max-content;
+    animation: ds-marquee var(--marquee-duration, 30s) linear infinite;
+  }
+  .ds-marquee:hover .ds-marquee__track {
+    animation-play-state: paused;
+  }
+
+  /* ---------------------------------------------------------------------------
+   * Organic blob backdrop — breaks the rectangular grid behind sections.
+   * ------------------------------------------------------------------------ */
+  @keyframes ds-blob-morph {
+    0%,
+    100% {
+      border-radius: 62% 38% 46% 54% / 58% 44% 56% 42%;
+      transform: rotate(0deg);
+    }
+    50% {
+      border-radius: 42% 58% 63% 37% / 42% 62% 38% 58%;
+      transform: rotate(12deg);
+    }
+  }
+  .ds-blob {
+    position: absolute;
+    pointer-events: none;
+    animation: ds-blob-morph 18s ease-in-out infinite;
+    will-change: border-radius, transform;
+  }
+
+  /* Slow drift for background texture layers. */
+  @keyframes ds-drift {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(0, -18px, 0);
+    }
+  }
+
+  /* react-day-picker theme overrides to match the design system. */
+  .rdp-root {
+    --rdp-accent-color: var(--color-teal);
+    --rdp-accent-background-color: var(--color-amber-soft);
+    --rdp-today-color: var(--color-teal-deep);
+    --rdp-day-height: 2.75rem;
+    --rdp-day-width: 2.75rem;
+  }
+  .rdp-day-full:not([data-selected='true']) button {
+    background-color: color-mix(in srgb, var(--color-amber-soft) 55%, transparent);
+  }
+  .rdp-day-demand-free button {
+    background-color: color-mix(in srgb, var(--color-success) 18%, transparent);
+  }
+  .rdp-day-demand-moderate button {
+    background-color: color-mix(in srgb, var(--color-amber-brand) 30%, transparent);
+  }
+  .rdp-day-demand-high button {
+    background-color: color-mix(in srgb, var(--color-urgent) 25%, transparent);
+  }
+  .rdp-day-closed button {
+    background-color: color-mix(in srgb, var(--color-charcoal) 15%, transparent);
+    text-decoration: line-through;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    /* Content that animates in must be unconditionally visible here — never let a disabled
+     * animation leave text hidden. */
+    .ds-reveal {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+}

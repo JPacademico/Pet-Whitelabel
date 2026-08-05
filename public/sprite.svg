@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="yarn" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+    <circle cx="16" cy="16" r="12"/>
+    <path d="M16 4c-3 4-3 8 0 12s3 8 0 12"/>
+    <path d="M8 9c4 2 7 4 8 7"/>
+    <path d="M6 16c4 1 7 2.5 10 4.5"/>
+    <path d="M8 23c4-2 7-4 8-7"/>
+  </symbol>
+
+  <symbol id="clippers" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="6" y="12" width="14" height="9" rx="2"/>
+    <path d="M20 14.5h6l-3 2-3 2"/>
+    <path d="M9 12v-2a2 2 0 012-2h2a2 2 0 012 2v2"/>
+    <circle cx="10.5" cy="16.5" r="1"/>
+  </symbol>
+
+  <symbol id="collar" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 14c0 7 5.4 12.6 12 12.6S28 21 28 14"/>
+    <circle cx="16" cy="21" r="2.4" fill="currentColor" stroke="none"/>
+    <path d="M9 14.6a7 7 0 0114 0" stroke-dasharray="2 3"/>
+  </symbol>
+
+  <symbol id="bone-treat" viewBox="0 0 32 32" fill="currentColor">
+    <path d="M6 12a4 4 0 116-5l12 12a4 4 0 11-5 6L6 12z"/>
+    <path d="M25 6a4 4 0 114 5L17 23a4 4 0 11-5-6L25 6z"/>
+  </symbol>
+
+  <!-- lucide-react dropped brand icons; this is an original geometric mark, not the Instagram logo. -->
+  <symbol id="social" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="5" y="5" width="22" height="22" rx="7"/>
+    <circle cx="16" cy="16" r="6"/>
+    <circle cx="23" cy="9" r="1.2" fill="currentColor" stroke="none"/>
+  </symbol>
+</svg>

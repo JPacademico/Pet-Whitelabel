@@ -1,0 +1,3 @@
+# SPA fallback (Netlify). Without this, reloading a deep link like /loja returns 404 because
+# no such file exists on disk — the client router never gets a chance to handle it.
+/*  /index.html  200
