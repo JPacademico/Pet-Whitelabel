@@ -71,6 +71,18 @@ export const clinicDemandSchema = demandEntrySchema;
 export const clinicDemandListSchema = z.array(demandEntrySchema);
 export const hotelAvailabilityListSchema = z.array(demandEntrySchema);
 
+export const galleryRatioSchema = z.enum(['tall', 'square', 'wide']);
+export const galleryPhotoSchema = z.object({
+  id: z.string(),
+  animalType: animalTypeSchema,
+  alt: z.string().min(1),
+  ratio: galleryRatioSchema,
+  url: z.string(),
+  fullUrl: z.string(),
+  createdAt: z.string(),
+});
+export const galleryPhotoListSchema = z.array(galleryPhotoSchema);
+
 export const adminSessionSchema = z.object({
   user: z.string(),
   expiresAt: z.string(),
@@ -108,6 +120,14 @@ export const productFormSchema = z.object({
   salePercentOff: z.number().min(1).max(90).optional(),
 });
 export type ProductFormValues = z.infer<typeof productFormSchema>;
+
+export const galleryPhotoFormSchema = z.object({
+  animalType: animalTypeSchema,
+  alt: z.string().trim().min(4, 'Descreva a foto em poucas palavras').max(120),
+  ratio: galleryRatioSchema,
+  url: z.string().trim().url('Informe uma URL de imagem válida'),
+});
+export type GalleryPhotoFormValues = z.infer<typeof galleryPhotoFormSchema>;
 
 export const loginFormSchema = z.object({
   username: z.string().trim().min(1, 'Informe o usuário'),

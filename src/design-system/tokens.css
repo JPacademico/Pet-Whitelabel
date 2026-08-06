@@ -311,9 +311,117 @@
   .rdp-day-demand-high button {
     background-color: color-mix(in srgb, var(--color-urgent) 25%, transparent);
   }
+  /* "Closed" reads as red everywhere in the admin — the same colour the slot grid uses for a
+   * switched-off hour, so one glance at either surface means the same thing. */
   .rdp-day-closed button {
-    background-color: color-mix(in srgb, var(--color-charcoal) 15%, transparent);
+    background-color: color-mix(in srgb, var(--color-urgent) 20%, transparent);
+    color: var(--color-urgent);
+    font-weight: 700;
     text-decoration: line-through;
+  }
+  /* A date carrying its own hours instead of inheriting the weekly template. */
+  .rdp-day-custom button {
+    background-color: color-mix(in srgb, var(--color-teal) 16%, transparent);
+    box-shadow: inset 0 0 0 2px var(--color-teal);
+    font-weight: 700;
+  }
+
+  /* ---------------------------------------------------------------------------
+   * Admin panel — animation + layout helpers.
+   * Same rule as the public site: transform/opacity only, and everything here is
+   * neutralised by the reduced-motion block at the bottom of this file.
+   * ------------------------------------------------------------------------ */
+
+  /* Staggered entrance for dashboard cards and list rows. `--enter-delay` is set inline. */
+  @keyframes ds-admin-enter {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 14px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  .ds-admin-enter {
+    animation: ds-admin-enter 420ms var(--ease-out-soft) both;
+    animation-delay: var(--enter-delay, 0ms);
+  }
+
+  /* The active nav pill's little amber marker slides//grows in rather than snapping. */
+  @keyframes ds-admin-nav-marker {
+    from {
+      opacity: 0;
+      transform: scaleY(0.2);
+    }
+    to {
+      opacity: 1;
+      transform: scaleY(1);
+    }
+  }
+  .ds-admin-nav-marker {
+    animation: ds-admin-nav-marker 260ms var(--ease-out-soft) both;
+  }
+
+  /* Confirmation pop when an hour is switched on/off in the weekly grid. */
+  @keyframes ds-slot-pop {
+    0% {
+      transform: scale(1);
+    }
+    45% {
+      transform: scale(1.14);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  .ds-slot-pop {
+    animation: ds-slot-pop 240ms var(--ease-out-soft);
+  }
+
+  /* The save bar drops in from the top edge of the content column when a draft goes dirty. */
+  @keyframes ds-slide-down {
+    from {
+      opacity: 0;
+      transform: translate3d(0, -12px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  .ds-slide-down {
+    animation: ds-slide-down 260ms var(--ease-out-soft) both;
+  }
+
+  /* Unsaved-changes dot on the save bar. */
+  @keyframes ds-pulse-dot {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.45;
+      transform: scale(0.72);
+    }
+  }
+  .ds-pulse-dot {
+    animation: ds-pulse-dot 1.6s ease-in-out infinite;
+  }
+
+  /* Weekly hour grid ---------------------------------------------------------
+   * The grid paints by dragging across cells; suppressing text selection keeps the
+   * drag from turning into a text highlight halfway across the week. */
+  .ds-slot-grid--painting {
+    user-select: none;
+    cursor: pointer;
+  }
+
+  /* Cells sit flush against each other, so a hovered cell's ring would be clipped by its
+   * neighbours without this. */
+  .ds-slot-cell:is(:hover, :focus-visible) {
+    z-index: 1;
   }
 
   @media (prefers-reduced-motion: reduce) {

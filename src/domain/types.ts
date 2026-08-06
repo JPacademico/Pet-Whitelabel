@@ -88,6 +88,23 @@ export type ClinicDemand = DemandEntry;
 /** Hotel: how many kennel places are left that night. Same shape, different wording in the UI. */
 export type HotelAvailability = DemandEntry;
 
+export type GalleryRatio = 'tall' | 'square' | 'wide';
+
+export interface GalleryPhoto {
+  id: string;
+  animalType: AnimalType;
+  alt: string;
+  /** Aspect ratio hint so the masonry grid on the public page reserves the right space (CLS = 0). */
+  ratio: GalleryRatio;
+  /** Thumbnail shown in the grid. */
+  url: string;
+  /** Larger version shown in the lightbox. Admin-added photos use the same URL for both. */
+  fullUrl: string;
+  createdAt: string;
+}
+
+export type NewGalleryPhoto = Omit<GalleryPhoto, 'id' | 'createdAt'>;
+
 export type SlotState = 'free' | 'booked' | 'past';
 
 export interface ResolvedSlot {

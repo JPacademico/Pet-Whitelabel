@@ -1,12 +1,13 @@
 import { create } from 'zustand';
 import { STORAGE_KEYS } from '@/data/storage/keys';
 
-export type DataDomain = 'products' | 'bookings' | 'availability';
+export type DataDomain = 'products' | 'bookings' | 'availability' | 'gallery';
 
 interface DataVersionState {
   products: number;
   bookings: number;
   availability: number;
+  gallery: number;
   bump: (domain: DataDomain) => void;
 }
 
@@ -21,6 +22,7 @@ export const useDataVersion = create<DataVersionState>((set) => ({
   products: 0,
   bookings: 0,
   availability: 0,
+  gallery: 0,
   bump: (domain) => set((s) => ({ [domain]: s[domain] + 1 })),
 }));
 
@@ -41,6 +43,8 @@ if (typeof window !== 'undefined') {
       useDataVersion.getState().bump('bookings');
     } else if (availabilityKeys.some((k) => event.key!.endsWith(`:${k}`))) {
       useDataVersion.getState().bump('availability');
+    } else if (event.key.endsWith(`:${STORAGE_KEYS.galleryPhotos}`)) {
+      useDataVersion.getState().bump('gallery');
     }
   });
 }

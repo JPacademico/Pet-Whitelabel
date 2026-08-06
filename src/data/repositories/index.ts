@@ -6,11 +6,13 @@ import { localProductRepository } from './localProductRepository';
 import { localBookingRepository } from './localBookingRepository';
 import { localAvailabilityRepository } from './localAvailabilityRepository';
 import { localAuthRepository } from './localAuthRepository';
+import { localGalleryRepository } from './localGalleryRepository';
 
 export const productRepository = localProductRepository;
 export const bookingRepository = localBookingRepository;
 export const availabilityRepository = localAvailabilityRepository;
 export const authRepository = localAuthRepository;
+export const galleryRepository = localGalleryRepository;
 
 // Storage health is part of the data layer's public surface: the app shell needs to surface
 // quota/unavailable warnings to the user, but must not reach into the storage internals to do it.

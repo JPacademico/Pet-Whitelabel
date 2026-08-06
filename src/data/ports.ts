@@ -2,9 +2,11 @@ import type {
   AdminSession,
   ClinicDemand,
   DateOverride,
+  GalleryPhoto,
   GroomingBooking,
   HotelAvailability,
   NewBooking,
+  NewGalleryPhoto,
   NewProduct,
   Product,
   ProductFilter,
@@ -52,6 +54,12 @@ export interface AvailabilityRepository {
   setClinicDemand(entry: ClinicDemand): Promise<void>;
   listHotelAvailability(): Promise<HotelAvailability[]>;
   setHotelAvailability(entry: HotelAvailability): Promise<void>;
+}
+
+export interface GalleryRepository {
+  list(): Promise<GalleryPhoto[]>;
+  create(input: NewGalleryPhoto): Promise<GalleryPhoto>;
+  remove(id: string): Promise<void>;
 }
 
 export type LoginError = 'INVALID_CREDENTIALS';

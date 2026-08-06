@@ -1,6 +1,8 @@
 import type {
   ClinicDemand,
   DateOverride,
+  GalleryPhoto,
+  GalleryRatio,
   GroomingBooking,
   HotelAvailability,
   Product,
@@ -206,4 +208,58 @@ export function buildBookingSeed(now: Date): GroomingBooking[] {
       updatedAt: iso,
     };
   });
+}
+
+const GALLERY_RATIO_SIZES: Record<GalleryRatio, [number, number]> = {
+  tall: [600, 800],
+  square: [600, 600],
+  wide: [600, 440],
+};
+
+/**
+ * Placeholder pet photography, keyword-locked so each tile keeps a stable, on-theme image instead
+ * of a random one. `lock` makes the choice deterministic — without it every reload reshuffles the
+ * gallery. Replace with the establishment's real photos before launch (Appendix C item 2).
+ */
+function galleryPhoto(
+  id: string,
+  animalType: GalleryPhoto['animalType'],
+  keywords: string,
+  alt: string,
+  ratio: GalleryRatio,
+  lock: number,
+  createdAt: string,
+): GalleryPhoto {
+  const [w, h] = GALLERY_RATIO_SIZES[ratio];
+  return {
+    id,
+    animalType,
+    alt,
+    ratio,
+    url: `https://loremflickr.com/${w}/${h}/${keywords}?lock=${lock}`,
+    fullUrl: `https://loremflickr.com/1200/1500/${keywords}?lock=${lock}`,
+    createdAt,
+  };
+}
+
+export function buildGalleryPhotoSeed(now: Date): GalleryPhoto[] {
+  const iso = now.toISOString();
+  return [
+    galleryPhoto('g1', 'dog', 'golden,retriever', 'Golden retriever sorridente após o banho', 'tall', 501, iso),
+    galleryPhoto('g2', 'cat', 'tabby,cat', 'Gato malhado relaxando após a tosa', 'square', 502, iso),
+    galleryPhoto('g3', 'dog', 'puppy,dog', 'Filhote recém-banhado enrolado na toalha', 'wide', 503, iso),
+    galleryPhoto('g4', 'cat', 'siamese,cat', 'Gato siamês com laço após o banho', 'tall', 504, iso),
+    galleryPhoto('g5', 'dog', 'poodle', 'Poodle tosado no estilo teddy bear', 'square', 505, iso),
+    galleryPhoto('g6', 'cat', 'persian,cat', 'Filhote de gato persa recém-escovado', 'tall', 506, iso),
+    galleryPhoto('g7', 'dog', 'shihtzu,dog', 'Shih tzu com a pelagem escovada', 'wide', 507, iso),
+    galleryPhoto('g8', 'cat', 'ginger,cat', 'Gato laranja em consulta veterinária', 'square', 508, iso),
+    galleryPhoto('g9', 'dog', 'labrador', 'Labrador aguardando atendimento na clínica', 'tall', 509, iso),
+    galleryPhoto('g10', 'cat', 'blackandwhite,cat', 'Gato preto e branco em dia de spa', 'wide', 510, iso),
+    galleryPhoto('g11', 'dog', 'frenchbulldog', 'Bulldog francês com laço colorido', 'square', 511, iso),
+    galleryPhoto('g12', 'cat', 'kitten,playing', 'Gatinho brincando com novelo de lã', 'tall', 512, iso),
+    galleryPhoto('g13', 'dog', 'yorkshire,terrier', 'Yorkshire com tosa higiênica', 'square', 513, iso),
+    galleryPhoto('g14', 'cat', 'cat,sleeping', 'Gata descansando no hotel', 'wide', 514, iso),
+    galleryPhoto('g15', 'dog', 'germanshepherd', 'Pastor alemão após o check-up', 'tall', 515, iso),
+    galleryPhoto('g16', 'cat', 'grey,cat', 'Gato cinza no espaço do hotel', 'square', 516, iso),
+  ];
 }

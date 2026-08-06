@@ -5,6 +5,7 @@ export const STORAGE_KEYS = {
   dateOverrides: 'date-overrides',
   clinicDemand: 'clinic-demand',
   hotelAvailability: 'hotel-availability',
+  galleryPhotos: 'gallery-photos',
   session: 'session',
 } as const;
 

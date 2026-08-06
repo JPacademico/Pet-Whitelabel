@@ -39,6 +39,9 @@ const AdminBookingsPage = lazy(() =>
 const AdminCalendarPage = lazy(() =>
   import('@/features/admin/calendar/AdminCalendarPage').then((m) => ({ default: m.AdminCalendarPage })),
 );
+const AdminGalleryPage = lazy(() =>
+  import('@/features/admin/gallery/AdminGalleryPage').then((m) => ({ default: m.AdminGalleryPage })),
+);
 
 export const router = createBrowserRouter([
   {
@@ -68,6 +71,7 @@ export const router = createBrowserRouter([
       { path: 'produtos', element: <AdminProductsPage /> },
       { path: 'agendamentos', element: <AdminBookingsPage /> },
       { path: 'calendario', element: <AdminCalendarPage /> },
+      { path: 'galeria', element: <AdminGalleryPage /> },
     ],
   },
 ]);

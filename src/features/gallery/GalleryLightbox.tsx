@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
-import type { GalleryPhoto } from './galleryData';
+import type { GalleryPhoto } from '@/domain/types';
 
 export interface GalleryLightboxProps {
   photos: GalleryPhoto[];
@@ -52,7 +52,7 @@ export function GalleryLightbox({ photos, index, onIndexChange, onClose }: Galle
           </button>
 
           <img
-            src={photo.url.replace(/\/\d+\/\d+$/, '/1200/1500')}
+            src={photo.fullUrl}
             alt={photo.alt}
             className="max-h-[85vh] max-w-full rounded-xl object-contain"
           />

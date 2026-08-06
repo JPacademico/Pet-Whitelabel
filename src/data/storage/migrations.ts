@@ -1,6 +1,7 @@
 import {
   clinicDemandListSchema,
   dateOverrideListSchema,
+  galleryPhotoListSchema,
   groomingBookingListSchema,
   hotelAvailabilityListSchema,
   productListSchema,
@@ -11,6 +12,7 @@ import {
   buildBookingSeed,
   buildClinicDemandSeed,
   buildDateOverrideSeed,
+  buildGalleryPhotoSeed,
   buildHotelAvailabilitySeed,
   buildProductSeed,
   buildWeeklyTemplateSeed,
@@ -18,8 +20,8 @@ import {
 import { readCollection, readRawSchemaVersion, writeCollection, writeSchemaVersion } from './driver';
 import { ALL_STORAGE_KEYS, STORAGE_KEYS } from './keys';
 
-// v2 added the hotel service (weekly template + nightly availability).
-const CURRENT_SCHEMA_VERSION = 2;
+// v3 added the admin-managed gallery (previously a hardcoded array in the gallery feature).
+const CURRENT_SCHEMA_VERSION = 3;
 
 function seedAll(): void {
   const now = nowInBusinessTz();
@@ -29,6 +31,7 @@ function seedAll(): void {
   writeCollection(STORAGE_KEYS.dateOverrides, buildDateOverrideSeed(now));
   writeCollection(STORAGE_KEYS.clinicDemand, buildClinicDemandSeed(now));
   writeCollection(STORAGE_KEYS.hotelAvailability, buildHotelAvailabilitySeed(now));
+  writeCollection(STORAGE_KEYS.galleryPhotos, buildGalleryPhotoSeed(now));
   writeSchemaVersion(CURRENT_SCHEMA_VERSION);
 }
 
@@ -72,6 +75,9 @@ export function bootstrapStorage(): void {
   }
   if (readCollection(STORAGE_KEYS.hotelAvailability, hotelAvailabilityListSchema).length === 0) {
     writeCollection(STORAGE_KEYS.hotelAvailability, buildHotelAvailabilitySeed(now));
+  }
+  if (readCollection(STORAGE_KEYS.galleryPhotos, galleryPhotoListSchema).length === 0) {
+    writeCollection(STORAGE_KEYS.galleryPhotos, buildGalleryPhotoSeed(now));
   }
 }
 
